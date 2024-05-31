@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sort and Search</title>
+    <script src="sort_search.js"></script>
+</head>
+<body>
+    <h1>Algoritmos de Búsqueda y Ordenamiento en WebAssembly</h1>
+    <button onclick="mostrarResultados()">Ejecutar Sorteos</button>
+    <div id="resultado"></div>
+
+    <script>
+        function mostrarResultados() {
+            const n = 10;
+            let arr = new Int32Array([5, 3, 8, 6, 2, 7, 1, 9, 4, 0]);
+
+            const arrPtr = Module._malloc(arr.length * arr.BYTES_PER_ELEMENT);
+            Module.HEAP32.set(arr, arrPtr / arr.BYTES_PER_ELEMENT);
+
+            const sortedArrPtr = Module._obtener_copia(arrPtr, n);  // Copia para ordenar y mostrar
+            Module._ordenamiento_burbuja(sortedArrPtr, n);
+
+            const sortedArray = new Int32Array(Module.HEAP32.buffer, sortedArrPtr, n);
+            document.getElementById('resultado').innerHTML = '';
+            agregarResultado('Búsqueda Secuencial', sortedArray);
+            agregarResultado('Búsqueda Binaria', sortedArray);
+            agregarResultado('Algoritmo de Ordenamiento de la Burbuja', sortedArray);
+            agregarResultado('Quick Sort', sortedArray);
+            agregarResultado('Método de Inserción', sortedArray);
+
+            Module._free(arrPtr);
+            Module._free(sortedArrPtr);
+        }
+
+        function agregarResultado(algoritmo, resultados) {
+            const resultadoDiv = document.createElement('div');
+            resultadoDiv.innerText = `${algoritmo}: ${resultados.join(', ')}`;
+            document.getElementById('resultado').appendChild(resultadoDiv);
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
